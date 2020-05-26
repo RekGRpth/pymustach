@@ -2,7 +2,7 @@
 #include <mustach/mustach.h>
 #include <mustach/mustach-json-c.h>
 
-PyObject *mustach(const char *json, const char *template, const char *file) {
+PyObject *pymustach(const char *json, const char *template, const char *file) {
     char *output_data;
     enum json_tokener_error error;
     FILE *out;

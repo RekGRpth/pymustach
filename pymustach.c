@@ -31,8 +31,8 @@ PyObject *mustach(const char *json, const char *template, const char *file) {
         default: PyErr_SetString(PyExc_TypeError, "fmustach_json_c"); goto json_object_put;
     }
     if (!json_object_put(object)) { PyErr_SetString(PyExc_TypeError, "!json_object_put"); goto free; }
+    fclose(out);
     if (file) Py_RETURN_TRUE; else {
-        fclose(out);
         PyObject *bytes = PyBytes_FromStringAndSize(output_data, (Py_ssize_t)output_len);
         free(output_data);
         return bytes;

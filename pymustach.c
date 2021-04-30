@@ -1,30 +1,42 @@
-#include <Python.h>
-#include <mustach/mustach-json-c.h>
+#include "pymustach.h"
+#include <mustach/mustach.h>
 
-PyObject *mustach(const char *json, const char *template, const char *file) {
-    char *output_data;
-    enum json_tokener_error error;
+static PyObject *pymustach(const char *json, const char *template, const char *file, int (*pymustach_process)(const char *template, const char *data, size_t len, FILE *file)) {
+    char *data;
     FILE *out;
-    size_t output_len;
-    struct json_object *object;
+    size_t len;
     if (file) {
-        if (!(out = fopen(file, "wb"))) { PyErr_SetString(PyExc_TypeError, "!fopen"); goto Py_RETURN_NONE_; }
+        if (!(out = fopen(file, "wb"))) { PyErr_SetString(PyExc_TypeError, "!fopen"); goto ret; }
     } else {
-        if (!(out = open_memstream(&output_data, &output_len))) { PyErr_SetString(PyExc_TypeError, "!open_memstream"); goto Py_RETURN_NONE_; }
+        if (!(out = open_memstream(&data, &len))) { PyErr_SetString(PyExc_TypeError, "!open_memstream"); goto ret; }
     }
-    if (!(object = json_tokener_parse_verbose(json, &error))) { PyErr_Format(PyExc_TypeError, "!json_tokener_parse and %s", json_tokener_error_desc(error)); goto free; }
-    if (fmustach_json_c(template, object, out)) { PyErr_SetString(PyExc_TypeError, "fmustach_json_c"); goto json_object_put; }
-    if (!json_object_put(object)) { PyErr_SetString(PyExc_TypeError, "!json_object_put"); goto free; }
+    switch (pymustach_process(template, json, strlen(json), out)) {
+        case MUSTACH_OK: break;
+        case MUSTACH_ERROR_SYSTEM: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_SYSTEM"); goto free;
+        case MUSTACH_ERROR_UNEXPECTED_END: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_UNEXPECTED_END"); goto free;
+        case MUSTACH_ERROR_EMPTY_TAG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_EMPTY_TAG"); goto free;
+        case MUSTACH_ERROR_TAG_TOO_LONG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_TAG_TOO_LONG"); goto free;
+        case MUSTACH_ERROR_BAD_SEPARATORS: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_BAD_SEPARATORS"); goto free;
+        case MUSTACH_ERROR_TOO_DEEP: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_TOO_DEEP"); goto free;
+        case MUSTACH_ERROR_CLOSING: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_CLOSING"); goto free;
+        case MUSTACH_ERROR_BAD_UNESCAPE_TAG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_BAD_UNESCAPE_TAG"); goto free;
+        case MUSTACH_ERROR_INVALID_ITF: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_INVALID_ITF"); goto free;
+        case MUSTACH_ERROR_ITEM_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_ITEM_NOT_FOUND"); goto free;
+        case MUSTACH_ERROR_PARTIAL_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_PARTIAL_NOT_FOUND"); goto free;
+        default: PyErr_SetString(PyExc_TypeError, "ngx_http_mustach_process"); goto free;
+    }
     if (file) Py_RETURN_TRUE; else {
         fclose(out);
-        PyObject *bytes = PyBytes_FromStringAndSize(output_data, (Py_ssize_t)output_len);
-        free(output_data);
+        PyObject *bytes = PyBytes_FromStringAndSize(data, (Py_ssize_t)len);
+        free(data);
         return bytes;
     }
-json_object_put:
-    if (!json_object_put(object)) { PyErr_SetString(PyExc_TypeError, "!json_object_put"); }
 free:
-    if (!file) free(output_data);
-Py_RETURN_NONE_:
+    if (!file) free(data);
+ret:
     Py_RETURN_NONE;
 }
+
+PyObject *mustach_cjson(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_cjson); }
+PyObject *mustach_jansson(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_jansson); }
+PyObject *mustach_json_c(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_json_c); }

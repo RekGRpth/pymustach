@@ -10,10 +10,8 @@ class build_ext_first(build_py_orig):
 if sys.platform.startswith("linux"):
     module = Extension(
         "_pymustach",
-        ["pymustach.i", "pymustach.c"],
-        libraries=[
-            "mustach",
-        ],
+        ["pymustach.i", "pymustach.c", "pymustach-cjson.c", "pymustach-jansson.c", "pymustach-json-c.c"],
+        libraries=["mustach", "cjson", "jansson", "json-c"],
     )
 
 setup(

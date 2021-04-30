@@ -31,9 +31,9 @@ static PyObject *pymustach_internal(PyObject *json, const char *template, const 
     }
     if (file) Py_RETURN_TRUE; else {
         fclose(out);
-        PyObject *bytes = PyBytes_FromStringAndSize(output_data, output_len);
+        PyObject *unicode = PyUnicode_FromStringAndSize(output_data, output_len);
         free(output_data);
-        return bytes;
+        return unicode;
     }
 free:
     if (!file) free(output_data);

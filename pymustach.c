@@ -2,13 +2,13 @@
 #include <mustach/mustach.h>
 
 static PyObject *pymustach_internal(PyObject *json, const char *template, const char *file, int (*pymustach_process)(const char *template, const char *data, size_t len, FILE *file)) {
-    char *input_data;
     char *output_data;
+    const char *input_data;
     FILE *out;
     Py_ssize_t input_len;
     Py_ssize_t output_len;
-    if (!PyBytes_Check(json)) { PyErr_SetString(PyExc_TypeError, "!PyBytes_Check"); goto ret; }
-    if (PyBytes_AsStringAndSize(json, &input_data, &input_len)) { PyErr_SetString(PyExc_TypeError, "PyBytes_AsStringAndSize"); goto ret; }
+    if (!PyUnicode_Check(json)) { PyErr_SetString(PyExc_TypeError, "!PyUnicode_Check"); goto ret; }
+    if (!(input_data = PyUnicode_AsUTF8AndSize(json, &input_len))) { PyErr_SetString(PyExc_TypeError, "PyUnicode_AsUTF8AndSize"); goto ret; }
     if (file) {
         if (!(out = fopen(file, "wb"))) { PyErr_SetString(PyExc_TypeError, "!fopen"); goto ret; }
     } else {

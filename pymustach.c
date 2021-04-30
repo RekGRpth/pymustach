@@ -1,7 +1,7 @@
 #include "pymustach.h"
 #include <mustach/mustach.h>
 
-static PyObject *pymustach(const char *json, const char *template, const char *file, int (*pymustach_process)(const char *template, const char *data, size_t len, FILE *file)) {
+static PyObject *pymustach_internal(const char *json, const char *template, const char *file, int (*pymustach_process)(const char *template, const char *data, size_t len, FILE *file)) {
     char *data;
     FILE *out;
     size_t len;
@@ -37,6 +37,12 @@ ret:
     Py_RETURN_NONE;
 }
 
-PyObject *pymustach_cjson(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_cjson); }
-PyObject *pymustach_jansson(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_jansson); }
-PyObject *pymustach_json_c(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_json_c); }
+PyObject *pymustach(const char *json, const char *template) { return pymustach_internal(json, template, NULL, pymustach_process_json_c); }
+PyObject *pymustach_cjson(const char *json, const char *template) { return pymustach_internal(json, template, NULL, pymustach_process_cjson); }
+PyObject *pymustach_jansson(const char *json, const char *template) { return pymustach_internal(json, template, NULL, pymustach_process_jansson); }
+PyObject *pymustach_json_c(const char *json, const char *template) { return pymustach_internal(json, template, NULL, pymustach_process_json_c); }
+
+PyObject *pymustach_file(const char *json, const char *template, const char *file) { return pymustach_internal(json, template, file, pymustach_process_json_c); }
+PyObject *pymustach_cjson_file(const char *json, const char *template, const char *file) { return pymustach_internal(json, template, file, pymustach_process_cjson); }
+PyObject *pymustach_jansson_file(const char *json, const char *template, const char *file) { return pymustach_internal(json, template, file, pymustach_process_jansson); }
+PyObject *pymustach_json_c_file(const char *json, const char *template, const char *file) { return pymustach_internal(json, template, file, pymustach_process_json_c); }

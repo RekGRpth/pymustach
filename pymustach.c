@@ -37,6 +37,6 @@ ret:
     Py_RETURN_NONE;
 }
 
-PyObject *mustach_cjson(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_cjson); }
-PyObject *mustach_jansson(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_jansson); }
-PyObject *mustach_json_c(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_json_c); }
+PyObject *pymustach_cjson(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_cjson); }
+PyObject *pymustach_jansson(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_jansson); }
+PyObject *pymustach_json_c(const char *json, const char *template, const char *file) { return pymustach(json, template, file, pymustach_process_json_c); }

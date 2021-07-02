@@ -8,6 +8,10 @@ const char *PyUnicode_AsUTF8AndSize(PyObject *unicode, Py_ssize_t *psize) {
     if (psize) *psize = strlen(data);
     return data;
 }
+
+const char *PyUnicode_AsUTF8(PyObject *unicode) {
+    return PyUnicode_AsUTF8AndSize(unicode, NULL);
+}
 #endif
 
 static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject *file, int (*pymustach_process)(const char *template, size_t length, const char *data, size_t len, FILE *file)) {

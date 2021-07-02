@@ -1,6 +1,15 @@
 #include "pymustach.h"
 #include <mustach/mustach.h>
 
+#ifndef PyUnicode_AsUTF8AndSize
+const char *PyUnicode_AsUTF8AndSize(PyObject *unicode, Py_ssize_t *psize) {
+    if (!PyUnicode_Check(unicode)) { PyErr_BadArgument(); return NULL; }
+    const char *data = PyUnicode_AS_DATA(unicode);
+    if (psize) *psize = strlen(data);
+    return data;
+}
+#endif
+
 static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject *file, int (*pymustach_process)(const char *template, size_t length, const char *data, size_t len, FILE *file)) {
     char *output_data;
     const char *json_data;

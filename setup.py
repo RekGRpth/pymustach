@@ -5,7 +5,7 @@ import sys, os
 class build_ext_first(build_py_orig):
     def run(self):
         self.run_command("build_ext")
-        return super().run()
+        return build_py_orig.run(self)
 
 if sys.platform.startswith("linux"):
     module = Extension(

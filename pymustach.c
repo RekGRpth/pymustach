@@ -1,7 +1,7 @@
 #include "pymustach.h"
 #include <mustach/mustach.h>
 
-#ifndef PyUnicode_AsUTF8AndSize
+#ifndef _PyUnicode_AsStringAndSize
 const char *PyUnicode_AsUTF8AndSize(PyObject *unicode, Py_ssize_t *psize) {
     if (!PyUnicode_Check(unicode)) { PyErr_BadArgument(); return NULL; }
     PyObject *utf8 = PyUnicode_AsUTF8String(unicode);

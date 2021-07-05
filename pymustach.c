@@ -4,8 +4,10 @@
 #ifndef PyUnicode_AsUTF8AndSize
 const char *PyUnicode_AsUTF8AndSize(PyObject *unicode, Py_ssize_t *psize) {
     if (!PyUnicode_Check(unicode)) { PyErr_BadArgument(); return NULL; }
-    const char *data = PyUnicode_AS_DATA(unicode);
-    if (psize) *psize = strlen(data);
+    PyObject *utf8 = PyUnicode_AsUTF8String(unicode);
+    if (!utf8) { PyErr_BadArgument(); return NULL; }
+    const char *data = PyString_AsString(utf8);
+    if (psize) *psize = PyString_GET_SIZE(utf8);
     return data;
 }
 

@@ -1,4 +1,6 @@
 #include "pymustach.h"
+
+#if __has_include(<mustach/mustach-jansson.h>)
 #include <mustach/mustach-jansson.h>
 
 int pymustach_process_jansson(const char *template, size_t length, const char *buffer, size_t buflen, FILE *file) {
@@ -11,3 +13,9 @@ int pymustach_process_jansson(const char *template, size_t length, const char *b
 ret:
     return rc;
 }
+#else
+int pymustach_process_jansson(const char *template, size_t length, const char *buffer, size_t buflen, FILE *file) {
+    PyErr_Format(PyExc_TypeError, "!mustach_jansson")
+    return -1;
+}
+#endif

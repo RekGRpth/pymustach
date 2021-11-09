@@ -1,4 +1,6 @@
 #include "pymustach.h"
+
+#if __has_include(<mustach/mustach-json-c.h>)
 #include <mustach/mustach-json-c.h>
 
 int pymustach_process_json_c(const char *template, size_t length, const char *str, size_t len, FILE *file) {
@@ -18,3 +20,9 @@ free:
 ret:
     return rc;
 }
+#else
+int pymustach_process_json_c(const char *template, size_t length, const char *str, size_t len, FILE *file) {
+    PyErr_Format(PyExc_TypeError, "!mustach_json_c")
+    return -1;
+}
+#endif

@@ -15,7 +15,7 @@ ret:
 }
 #else
 int pymustach_process_jansson(const char *template, size_t length, const char *buffer, size_t buflen, FILE *file) {
-    PyErr_Format(PyExc_TypeError, "!mustach_jansson")
+    PyErr_Format(PyExc_TypeError, "!mustach_jansson");
     return -1;
 }
 #endif

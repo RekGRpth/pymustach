@@ -14,7 +14,7 @@ ret:
 }
 #else
 int pymustach_process_cjson(const char *template, size_t length, const char *value, size_t buffer_length, FILE *file) {
-    PyErr_Format(PyExc_TypeError, "!mustach_cjson")
+    PyErr_Format(PyExc_TypeError, "!mustach_cjson");
     return -1;
 }
 #endif

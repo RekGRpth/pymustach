@@ -1,23 +1,15 @@
-from distutils.core import setup, Extension
-from distutils.command.build_py import build_py as build_py_orig
-import sys, os
+from setuptools import setup, Extension
 
-class build_ext_first(build_py_orig):
-    def run(self):
-        self.run_command("build_ext")
-        return build_py_orig.run(self)
-
-if sys.platform.startswith("linux"):
-    module = Extension(
-        "_pymustach",
-        ["pymustach.i", "pymustach.c", "pymustach-cjson.c", "pymustach-jansson.c", "pymustach-json-c.c"],
-        libraries=["mustach"],
-    )
+module = Extension(
+    "_pymustach",
+    ["pymustach.i", "pymustach.c", "pymustach-cjson.c", "pymustach-jansson.c", "pymustach-json-c.c"],
+    libraries=["mustach"],
+)
 
 setup(
-    name="pymustach",
-    url="https://github.com/RekGRpth/pymustach",
-    cmdclass={"build_py": build_ext_first},
     ext_modules=[module],
+    name="pymustach",
     py_modules=["pymustach"],
+    url="https://github.com/RekGRpth/pymustach",
+    version='1.0.0',
 )

@@ -7,7 +7,7 @@ int pymustach_process_cjson(const char *template, size_t length, const char *val
     cJSON *root;
     int rc = -1;
     if (!(root = cJSON_ParseWithLength(value, buffer_length))) { PyErr_Format(PyExc_TypeError, "!cJSON_ParseWithLength"); goto ret; }
-    rc = mustach_cJSON_file(template, length, root, Mustach_With_AllExtensions, file);
+    rc = mustach_cJSON_file(template, length, root, Mustach_With_AllExtensions | Mustach_With_ErrorUndefined, file);
     cJSON_Delete(root);
 ret:
     return rc;

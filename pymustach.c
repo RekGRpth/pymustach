@@ -49,6 +49,7 @@ static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject
         case MUSTACH_ERROR_INVALID_ITF: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_INVALID_ITF"); goto free;
         case MUSTACH_ERROR_ITEM_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_ITEM_NOT_FOUND"); goto free;
         case MUSTACH_ERROR_PARTIAL_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_PARTIAL_NOT_FOUND"); goto free;
+        case MUSTACH_ERROR_UNDEFINED_TAG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_UNDEFINED_TAG"); goto free;
         default: PyErr_SetString(PyExc_TypeError, "ngx_http_mustach_process"); goto free;
     }
     if (file) Py_RETURN_TRUE; else {

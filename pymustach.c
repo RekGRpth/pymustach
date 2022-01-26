@@ -50,7 +50,7 @@ static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject
         case MUSTACH_ERROR_ITEM_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_ITEM_NOT_FOUND"); goto free;
         case MUSTACH_ERROR_PARTIAL_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_PARTIAL_NOT_FOUND"); goto free;
         case MUSTACH_ERROR_UNDEFINED_TAG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_UNDEFINED_TAG"); goto free;
-        default: PyErr_SetString(PyExc_TypeError, "ngx_http_mustach_process"); goto free;
+        default: goto free;
     }
     if (file) Py_RETURN_TRUE; else {
         fclose(out);
@@ -61,7 +61,7 @@ static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject
 free:
     if (!file) free(output_data);
 ret:
-    Py_RETURN_NONE;
+    return NULL;
 }
 
 PyObject *pymustach(PyObject *json, PyObject *template) { return pymustach_internal(json, template, NULL, pymustach_process_json_c); }

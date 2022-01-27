@@ -19,7 +19,7 @@ static struct json_object *json_tokener_parse_verbose_len(const char *str, size_
 
 int pymustach_process_json_c(const char *template, size_t length, const char *str, size_t len, int flags, FILE *file) {
     enum json_tokener_error error = json_tokener_success;
-    int rc = -1;
+    int rc = MUSTACH_ERROR_USER(1);
     struct json_object *root;
     if (!(root = json_tokener_parse_verbose_len(str, len, &error))) { PyErr_Format(PyExc_TypeError, "!json_tokener_parse_verbose_len and %s", json_tokener_error_desc(error)); goto ret; }
     rc = mustach_json_c_file(template, length, root, flags, file);
@@ -30,6 +30,6 @@ ret:
 #else
 int pymustach_process_json_c(const char *template, size_t length, const char *str, size_t len, int flags, FILE *file) {
     PyErr_Format(PyExc_TypeError, "!mustach_json_c");
-    return -1;
+    return MUSTACH_ERROR_USER(1);
 }
 #endif

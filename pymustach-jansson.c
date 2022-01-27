@@ -4,7 +4,7 @@
 #include <mustach/mustach-jansson.h>
 
 int pymustach_process_jansson(const char *template, size_t length, const char *buffer, size_t buflen, int flags, FILE *file) {
-    int rc = -1;
+    int rc = MUSTACH_ERROR_USER(1);
     json_error_t error;
     json_t *root;
     if (!(root = json_loadb(buffer, buflen, JSON_DECODE_ANY, &error))) { PyErr_Format(PyExc_TypeError, "!json_loadb and %s", error.text); goto ret; }
@@ -16,6 +16,6 @@ ret:
 #else
 int pymustach_process_jansson(const char *template, size_t length, const char *buffer, size_t buflen, int flags, FILE *file) {
     PyErr_Format(PyExc_TypeError, "!mustach_jansson");
-    return -1;
+    return MUSTACH_ERROR_USER(1);
 }
 #endif

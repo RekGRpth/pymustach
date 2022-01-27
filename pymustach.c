@@ -42,12 +42,12 @@ PyObject *pymustach_with_singledot(void) { flags |= Mustach_With_SingleDot; Py_R
 
 static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject *file, int (*pymustach_process)(const char *template, size_t length, const char *data, size_t len, int flags, FILE *file, char **err)) {
     char *err;
-    char *output_data;
+    char *data = NULL;
     const char *json_data;
     const char *template_data;
     FILE *out;
     Py_ssize_t json_len;
-    Py_ssize_t output_len;
+    Py_ssize_t len;
     Py_ssize_t template_len;
     if (!PyUnicode_Check(json)) { PyErr_SetString(PyExc_TypeError, "!PyUnicode_Check"); goto ret; }
     if (!PyUnicode_Check(template)) { PyErr_SetString(PyExc_TypeError, "!PyUnicode_Check"); goto ret; }
@@ -59,7 +59,7 @@ static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject
         if (!(file_data = PyUnicode_AsUTF8(file))) { PyErr_SetString(PyExc_TypeError, "!PyUnicode_AsUTF8"); goto ret; }
         if (!(out = fopen(file_data, "wb"))) { PyErr_SetString(PyExc_TypeError, "!fopen"); goto ret; }
     } else {
-        if (!(out = open_memstream(&output_data, (size_t *)&output_len))) { PyErr_SetString(PyExc_TypeError, "!open_memstream"); goto ret; }
+        if (!(out = open_memstream(&data, (size_t *)&len))) { PyErr_SetString(PyExc_TypeError, "!open_memstream"); goto ret; }
     }
     switch (pymustach_process(template_data, template_len, json_data, json_len, flags, out, &err)) {
         case MUSTACH_OK: break;
@@ -78,12 +78,12 @@ static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject
         default: PyErr_Format(PyExc_TypeError, "%s", err); goto free;
     }
     if (file) Py_RETURN_TRUE; else {
-        PyObject *unicode = PyUnicode_FromStringAndSize(output_data, output_len);
-        free(output_data);
+        PyObject *unicode = PyUnicode_FromStringAndSize(data, len);
+        free(data);
         return unicode;
     }
 free:
-    if (!file) free(output_data);
+    if (!file) free(data);
 ret:
     return NULL;
 }

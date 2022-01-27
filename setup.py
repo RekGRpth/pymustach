@@ -6,7 +6,7 @@ setup(
     ext_modules=[Extension(
         libraries=["mustach"],
         name="_pymustach",
-        sources=["pymustach.i", "pymustach.c", "pymustach-cjson.c", "pymustach-jansson.c", "pymustach-json-c.c"],
+        sources=["pymustach.i", "pymustach.c", "mustach-cjson.c", "mustach-jansson.c", "mustach-json-c.c"],
     )],
     license='MIT',
     name="pymustach",

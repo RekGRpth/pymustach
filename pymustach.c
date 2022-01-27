@@ -1,5 +1,6 @@
 #include "pymustach.h"
 #include <mustach/mustach.h>
+#include <mustach/mustach-wrap.h>
 
 #if PY_VERSION_HEX < 0x03000000
 const char *PyUnicode_AsUTF8AndSize(PyObject *unicode, Py_ssize_t *psize) {
@@ -16,7 +17,23 @@ const char *PyUnicode_AsUTF8(PyObject *unicode) {
 }
 #endif
 
-static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject *file, int (*pymustach_process)(const char *template, size_t length, const char *data, size_t len, FILE *file)) {
+static int flags = Mustach_With_AllExtensions;
+
+PyObject *pymustach_with_allextensions(void) { flags |= Mustach_With_AllExtensions; Py_RETURN_NONE; }
+PyObject *pymustach_with_colon(void) { flags |= Mustach_With_Colon; Py_RETURN_NONE; }
+PyObject *pymustach_with_compare(void) { flags |= Mustach_With_Compare; Py_RETURN_NONE; }
+PyObject *pymustach_with_emptytag(void) { flags |= Mustach_With_EmptyTag; Py_RETURN_NONE; }
+PyObject *pymustach_with_equal(void) { flags |= Mustach_With_Equal; Py_RETURN_NONE; }
+PyObject *pymustach_with_errorundefined(void) { flags |= Mustach_With_ErrorUndefined; Py_RETURN_NONE; }
+PyObject *pymustach_with_escfirstcmp(void) { flags |= Mustach_With_EscFirstCmp; Py_RETURN_NONE; }
+PyObject *pymustach_with_incpartial(void) { flags |= Mustach_With_IncPartial; Py_RETURN_NONE; }
+PyObject *pymustach_with_jsonpointer(void) { flags |= Mustach_With_JsonPointer; Py_RETURN_NONE; }
+PyObject *pymustach_with_noextensions(void) { flags = Mustach_With_NoExtensions; Py_RETURN_NONE; }
+PyObject *pymustach_with_objectiter(void) { flags |= Mustach_With_ObjectIter; Py_RETURN_NONE; }
+PyObject *pymustach_with_partialdatafirst(void) { flags |= Mustach_With_PartialDataFirst; Py_RETURN_NONE; }
+PyObject *pymustach_with_singledot(void) { flags |= Mustach_With_SingleDot; Py_RETURN_NONE; }
+
+static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject *file, int (*pymustach_process)(const char *template, size_t length, const char *data, size_t len, int flags, FILE *file)) {
     char *output_data;
     const char *json_data;
     const char *template_data;
@@ -36,7 +53,7 @@ static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject
     } else {
         if (!(out = open_memstream(&output_data, (size_t *)&output_len))) { PyErr_SetString(PyExc_TypeError, "!open_memstream"); goto ret; }
     }
-    switch (pymustach_process(template_data, template_len, json_data, json_len, out)) {
+    switch (pymustach_process(template_data, template_len, json_data, json_len, flags, out)) {
         case MUSTACH_OK: break;
         case MUSTACH_ERROR_SYSTEM: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_SYSTEM"); goto free;
         case MUSTACH_ERROR_UNEXPECTED_END: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_UNEXPECTED_END"); goto free;

@@ -66,15 +66,31 @@ static PyObject *pymustach_internal(PyObject *json, PyObject *template, PyObject
         case MUSTACH_ERROR_SYSTEM: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_SYSTEM"); if (data) free(data); goto ret;
         case MUSTACH_ERROR_UNEXPECTED_END: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_UNEXPECTED_END"); if (data) free(data); goto ret;
         case MUSTACH_ERROR_EMPTY_TAG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_EMPTY_TAG"); if (data) free(data); goto ret;
+#if MUSTACH_VERSION >= 200
+        case MUSTACH_ERROR_TOO_BIG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_TOO_BIG"); if (data) free(data); goto ret;
+#else
         case MUSTACH_ERROR_TAG_TOO_LONG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_TAG_TOO_LONG"); if (data) free(data); goto ret;
+#endif
+#if MUSTACH_VERSION >= 200
+        case MUSTACH_ERROR_BAD_DELIMITER: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_BAD_DELIMITER"); if (data) free(data); goto ret;
+#else
         case MUSTACH_ERROR_BAD_SEPARATORS: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_BAD_SEPARATORS"); if (data) free(data); goto ret;
+#endif
         case MUSTACH_ERROR_TOO_DEEP: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_TOO_DEEP"); if (data) free(data); goto ret;
         case MUSTACH_ERROR_CLOSING: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_CLOSING"); if (data) free(data); goto ret;
         case MUSTACH_ERROR_BAD_UNESCAPE_TAG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_BAD_UNESCAPE_TAG"); if (data) free(data); goto ret;
         case MUSTACH_ERROR_INVALID_ITF: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_INVALID_ITF"); if (data) free(data); goto ret;
+#if MUSTACH_VERSION >= 200
+        case MUSTACH_ERROR_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_NOT_FOUND"); if (data) free(data); goto ret;
+#else
         case MUSTACH_ERROR_ITEM_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_ITEM_NOT_FOUND"); if (data) free(data); goto ret;
         case MUSTACH_ERROR_PARTIAL_NOT_FOUND: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_PARTIAL_NOT_FOUND"); if (data) free(data); goto ret;
+#endif
         case MUSTACH_ERROR_UNDEFINED_TAG: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_UNDEFINED_TAG"); if (data) free(data); goto ret;
+        case MUSTACH_ERROR_TOO_MUCH_NESTING: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_TOO_MUCH_NESTING"); if (data) free(data); goto ret;
+#if MUSTACH_VERSION >= 200
+        case MUSTACH_ERROR_OUT_OF_MEMORY: PyErr_SetString(PyExc_TypeError, "MUSTACH_ERROR_OUT_OF_MEMORY"); if (data) free(data); goto ret;
+#endif
         default: PyErr_Format(PyExc_TypeError, "%s", err); if (data) free(data); goto ret;
     }
     if (name) Py_RETURN_TRUE; else {
